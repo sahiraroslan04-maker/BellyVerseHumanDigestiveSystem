@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bellyverse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --blue: #00b5ff;
+            --green: #34d399;
+            --orange: #ffa726;
+            --purple: #a855f7;
+            --bg: linear-gradient(140deg, rgba(0,181,255,0.85), rgba(52,211,153,0.75), rgba(255,167,38,0.8), rgba(168,85,247,0.72));
+            --shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at 10% 20%, rgba(0,181,255,0.2), transparent 35%),
+                        radial-gradient(circle at 80% 15%, rgba(52,211,153,0.2), transparent 40%),
+                        radial-gradient(circle at 50% 100%, rgba(255,167,38,0.18), transparent 45%),
+                        var(--bg);
+            color: #fff;
+            padding: 40px;
+            text-align: center;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: repeating-radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08) 0 3px, transparent 4px 14px),
+                              repeating-linear-gradient(30deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 14px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .page-wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        .page-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 12px rgba(0,0,0,0.25);
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .page-title em {
+            font-style: italic;
+            color: #FFD700;
+        }
+
+        .page-subtitle {
+            color: rgba(255,255,255,0.92);
+            margin-bottom: 30px;
+            font-weight: 300;
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        .nav-button {
+            position: relative;
+            border: none;
+            border-radius: 22px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+            color: #fff;
+            padding: 24px 20px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.3s ease;
+            min-height: 175px;
+            box-shadow: var(--shadow), inset 0 0 0 1px rgba(255,255,255,0.15);
+            backdrop-filter: blur(8px);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .back-button {
+             display: inline-block;
+             background: rgba(255, 255, 255, 0.15);
+             border: 2px solid rgba(255, 255, 255, 0.3);
+             color: white;
+             padding: 10px 20px;
+             font-size: 0.9rem;
+             font-weight: 600;
+             text-decoration: none;
+             border-radius: 25px;
+             transition: all 0.3s ease;
+             backdrop-filter: blur(10px);
+             margin-bottom: 20px;
+             cursor: pointer;
+        }
+
+        .back-button:hover {
+             background: rgba(255, 255, 255, 0.25);
+             border-color: rgba(255, 255, 255, 0.5);
+             transform: translateY(-2px);
+             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-button:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.35), 0 0 24px rgba(255,255,255,0.3);
+            background: linear-gradient(140deg, rgba(0,181,255,0.35), rgba(52,211,153,0.26), rgba(255,167,38,0.23), rgba(168,85,247,0.4));
+        }
+
+        .nav-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            margin-bottom: 12px;
+            box-shadow: 0 7px 16px rgba(0,0,0,0.25);
+        }
+
+        .nav-icon span {
+            display: inline-flex;
+            width: 34px;
+            height: 34px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 1.35rem;
+            font-family: 'Fredoka One', cursive;
+            background: linear-gradient(145deg, rgba(255,255,255,0.35), rgba(255,255,255,0.1));
+            color: #0f172a;
+        }
+
+        .nav-label {
+            font-size: 1.15rem;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .nav-desc {
+            font-size: 0.94rem;
+            color: rgba(255,255,255,0.85);
+        }
+
+        .back-button {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="page-wrap">
+    <h1 class="page-title">Belly<em>Verse</em></h1>
+    <p class="page-subtitle">Choose your adventure in the Digestive System.</p>
+
+    <button class="back-button" onclick="window.location.href='Opening.html'">← Back to Opening</button>
+
+    <div class="nav-grid">
+
+        <button class="nav-button" onclick="window.location.href='notes.html'">
+            <div class="nav-icon"><span>📄</span></div>
+            <div class="nav-label">Notes</div>
+            <p class="nav-desc">Learn digestion.</p>
+        </button>
+
+        <button class="nav-button" onclick="window.open('https://gd.games/instant-builds/c03fa6e5-5403-4af3-8979-168b95d1bc40', '_blank')">
+            <div class="nav-icon"><span>🎮</span></div>
+            <div class="nav-label">Games</div>
+            <p class="nav-desc">Play and learn.</p>
+        </button>
+
+        <!-- FIXED 3D BUTTON -->
+        <button class="nav-button" onclick="toggle3DSection()">
+            <div class="nav-icon"><span>👁️</span></div>
+            <div class="nav-label">3D Anatomy</div>
+            <p class="nav-desc">Explore 3D digestive system.</p>
+        </button>
+
+    </div>
+
+    <!-- HIDDEN SECTION -->
+    <div id="threeDOptions" class="nav-grid" style="display:none; margin-top:20px;">
+
+        <button class="nav-button" onclick="window.open('https://app-edu.assemblrworld.com/en/creation/-6E8rxlFsrhggWz5aGgW','_blank')">
+            <div class="nav-icon"><span>🧠</span></div>
+            <div class="nav-label">Human Digestive System Full</div>
+        </button>
+
+        <button class="nav-button" onclick="window.open('https://www.meshy.ai/@s1774672585f814f','_blank')">
+            <div class="nav-icon"><span>👁️</span></div>
+            <div class="nav-label">Organs</div>
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+function toggle3DSection(){
+    let x = document.getElementById("threeDOptions");
+    x.style.display = (x.style.display === "none") ? "grid" : "none";
+}
+
+</script>
+
+</body>
+</html>

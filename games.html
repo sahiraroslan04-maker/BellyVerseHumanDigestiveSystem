@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digestive System RPG</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #fffae3, #ffe0b3);
+      text-align: center;
+      overflow: hidden;
+    }
+    #gameArea {
+      position: relative;
+      width: 400px;
+      height: 600px;
+      margin: 20px auto;
+      border: 2px solid #333;
+      border-radius: 10px;
+      background-color: #fff;
+      overflow: hidden;
+    }
+    .organ {
+      width: 100%;
+      height: 100px;
+      line-height: 100px;
+      margin: 20px 0;
+      background-color: #ffd699;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #food {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      top: 20px;
+      left: 170px;
+      background-image: url('https://cdn-icons-png.flaticon.com/512/1046/1046784.png'); /* burger icon */
+      background-size: cover;
+      transition: top 1s;
+    }
+    #message {
+      margin-top: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 15px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Digestive System RPG</h1>
+  <div id="gameArea">
+    <div id="food"></div>
+    <div class="organ" id="mouth">Mouth</div>
+    <div class="organ" id="esophagus">Esophagus</div>
+    <div class="organ" id="stomach">Stomach</div>
+    <div class="organ" id="smallIntestine">Small Intestine</div>
+    <div class="organ" id="largeIntestine">Large Intestine</div>
+  </div>
+  <div id="message">Click the mouth to start chewing!</div>
+  <button id="startBtn">Start Game</button>
+
+  <script>
+    const food = document.getElementById('food');
+    const message = document.getElementById('message');
+    const organs = ['mouth', 'esophagus', 'stomach', 'smallIntestine', 'largeIntestine'];
+    let currentStage = 0;
+
+    const organMessages = {
+      mouth: 'Chewing in the mouth! Saliva with amylase breaks down carbs.',
+      esophagus: 'Moving down the esophagus with peristalsis.',
+      stomach: 'Stomach churns food with gastric juices and pepsin.',
+      smallIntestine: 'Enzymes break down nutrients and absorption occurs.',
+      largeIntestine: 'Water absorbed, waste formed, ready to exit!'
+    };
+
+    document.getElementById('startBtn').addEventListener('click', () => {
+      moveToNextOrgan();
+    });
+
+    function moveToNextOrgan() {
+      if(currentStage >= organs.length) {
+        message.textContent = "Digestion complete! Food has exited the body.";
+        food.style.top = '520px';
+        return;
+      }
+      const organId = organs[currentStage];
+      const organElement = document.getElementById(organId);
+      food.style.top = organElement.offsetTop + 'px';
+      message.textContent = organMessages[organId];
+      currentStage++;
+    }
+
+    // Optional: Click on organ to move food
+    organs.forEach(id => {
+      document.getElementById(id).addEventListener('click', moveToNextOrgan);
+    });
+  </script>
+</body>
+</html>

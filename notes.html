@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bellyverse Notes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue: #00b5ff;
+            --green: #34d399;
+            --orange: #ffa726;
+            --purple: #a855f7;
+            --bg: linear-gradient(140deg, rgba(0,181,255,0.85), rgba(52,211,153,0.75), rgba(255,167,38,0.8), rgba(168,85,247,0.72));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            background: radial-gradient(circle at 10% 20%, rgba(0,181,255,0.2), transparent 35%),
+                        radial-gradient(circle at 80% 15%, rgba(52,211,153,0.2), transparent 40%),
+                        radial-gradient(circle at 50% 100%, rgba(255,167,38,0.18), transparent 45%),
+                        var(--bg);
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: repeating-radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08) 0 3px, transparent 4px 14px),
+                              repeating-linear-gradient(30deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 14px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .page-wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .lang-toggle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: flex;
+            background: rgba(255,255,255,0.1);
+            border-radius: 25px;
+            padding: 3px;
+            backdrop-filter: blur(10px);
+        }
+
+        .lang-btn {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+        }
+
+        .page-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 12px rgba(0,0,0,0.25);
+        }
+
+        .page-subtitle {
+            color: rgba(255,255,255,0.9);
+            font-weight: 300;
+            font-size: 1.1rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab-button {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-button:hover,
+        .tab-button.active {
+            background: rgba(255,255,255,0.2);
+            border-color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .content-section {
+            display: none;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 20px;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            text-align: left;
+        }
+
+        .notes-content {
+            text-align: left;
+            line-height: 1.6;
+        }
+
+        .notes-content:not(.active) {
+            display: none;
+        }
+
+        .notes-content h3 {
+            color: #fff;
+            margin: 20px 0 10px 0;
+            font-size: 1.3rem;
+        }
+
+        .notes-content p {
+            margin-bottom: 15px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .notes-content ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .notes-content li {
+            margin-bottom: 8px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .highlight {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.5);
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .back-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .tab-button {
+                width: 200px;
+            }
+
+            .content-section {
+                padding: 20px;
+            }
+        }
+
+        .section-image {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            border-radius: 15px;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .section-image:hover {
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+
+        /* Modal Styles */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 90%;
+            max-height: 90%;
+            cursor: grab;
+            transition: transform 0.3s ease;
+        }
+
+        .modal-content:active {
+            cursor: grabbing;
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .zoom-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .zoom-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .zoom-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .zoom-level {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body>
+    <a href="index2.html" class="back-button">← Back to Navigation</a>
+
+    <div class="page-wrap">
+        <div class="page-header">
+            <div class="lang-toggle">
+                <button class="lang-btn active" onclick="setLanguage('en')">English</button>
+                <button class="lang-btn" onclick="setLanguage('ms')">Bahasa Melayu</button>
+            </div>
+            <h1 class="page-title"><em>Bellyverse</em> Notes</h1>
+            <p class="page-subtitle">Comprehensive study materials for the Human Digestive System</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="tab-button active" onclick="showSection('section-91')">9.1</button>
+            <button class="tab-button" onclick="showSection('section-92')">9.2</button>
+            <button class="tab-button" onclick="showSection('section-93')">9.3</button>
+            <button class="tab-button" onclick="showSection('section-94')">9.4</button>
+            <button class="tab-button" onclick="showSection('section-95')">9.5</button>
+            <button class="tab-button" onclick="showSection('section-96')">9.6</button>
+            <button class="tab-button" onclick="showSection('section-97')">9.7</button>
+        </div>
+
+        <div id="section-91" class="content-section active">
+            <h2 class="section-title">9.1: Introduction to Digestion & Nutrition | Pengenalan Pencernaan & Pemakanan</h2>
+            <img src="Gambar Notes/Intro.png" alt="Human Digestive System Diagram" class="section-image">
+            <div class="notes-content en active">
+                <h3>What is Digestion?</h3>
+                <p>Digestion is the process by which food is broken down into smaller molecules that can be absorbed by the body. This process involves both mechanical and chemical breakdown.</p>
+
+                <h3>Types of Digestion</h3>
+                <ul>
+                    <li><span class="highlight">Mechanical digestion:</span> Physical breakdown of food (chewing, churning)</li>
+                    <li><span class="highlight">Chemical digestion:</span> Enzymatic breakdown of macromolecules</li>
+                </ul>
+
+                <h3>Essential Nutrients</h3>
+                <ul>
+                    <li><span class="highlight">Carbohydrates:</span> Main energy source, broken down into glucose</li>
+                    <li><span class="highlight">Proteins:</span> Building blocks for tissues, enzymes, hormones</li>
+                    <li><span class="highlight">Lipids:</span> Energy storage, cell membranes, insulation</li>
+                    <li><span class="highlight">Vitamins & Minerals:</span> Essential for various metabolic functions</li>
+                    <li><span class="highlight">Water:</span> Essential for all bodily functions</li>
+                </ul>
+
+                <h3>Key Concepts</h3>
+                <p>The digestive system works to extract nutrients from food while eliminating waste. Proper nutrition is crucial for maintaining health and supporting bodily functions.</p>
+            </div>
+            <div class="notes-content ms">
+                <h3>Apakah Pencernaan?</h3>
+                <p>Pencernaan adalah proses di mana makanan dipecahkan menjadi molekul yang lebih kecil yang boleh diserap oleh badan. Proses ini melibatkan pecahan mekanikal dan kimia.</p>
+
+                <h3>Jenis-jenis Pencernaan</h3>
+                <ul>
+                    <li><span class="highlight">Pencernaan mekanikal:</span> Pecahan fizikal makanan (mengunyah, mengacau)</li>
+                    <li><span class="highlight">Pencernaan kimia:</span> Pecahan enzimatik makromolekul</li>
+                </ul>
+
+                <h3>Nutrien Penting</h3>
+                <ul>
+                    <li><span class="highlight">Karbohidrat:</span> Sumber tenaga utama, dipecahkan menjadi glukosa</li>
+                    <li><span class="highlight">Protein:</span> Blok binaan untuk tisu, enzim, hormon</li>
+                    <li><span class="highlight">Lipid:</span> Simpanan tenaga, membran sel, penebat</li>
+                    <li><span class="highlight">Vitamin & Mineral:</span> Penting untuk pelbagai fungsi metabolik</li>
+                    <li><span class="highlight">Air:</span> Penting untuk semua fungsi badan</li>
+                </ul>
+
+                <h3>Konsep Utama</h3>
+                <p>Sistem pencernaan berfungsi untuk mengekstrak nutrien dari makanan sambil menghilangkan sisa. Pemakanan yang betul adalah penting untuk mengekalkan kesihatan dan menyokong fungsi badan.</p>
+            </div>
+        </div>
+
+        <div id="section-92" class="content-section">
+            <h2 class="section-title">9.2: Digestive System Organs | Organ-organ Sistem Pencernaan</h2>
+            <img src="Gambar Notes/Overview.png" alt="Digestive System Organs" class="section-image">
+            <div class="notes-content en active">
+                <h3>The Digestive System Organs</h3>
+                <p>The digestive system consists of several organs that work together to break down food and absorb nutrients.</p>
+
+                <h3>Mouth (Oral Cavity)</h3>
+                <ul>
+                    <li><span class="highlight">Teeth:</span> Mechanical breakdown of food</li>
+                    <li><span class="highlight">Tongue:</span> Mixing food with saliva, taste sensation</li>
+                    <li><span class="highlight">Salivary glands:</span> Produce saliva containing amylase</li>
+                    <li><span class="highlight">Function:</span> Ingestion and initial digestion</li>
+                </ul>
+
+                <h3>Pharynx and Esophagus</h3>
+                <ul>
+                    <li><span class="highlight">Pharynx:</span> Common passage for food and air</li>
+                    <li><span class="highlight">Epiglottis:</span> Prevents food from entering trachea</li>
+                    <li><span class="highlight">Esophagus:</span> Muscular tube connecting pharynx to stomach</li>
+                    <li><span class="highlight">Peristalsis:</span> Wave-like muscle contractions</li>
+                </ul>
+
+                <h3>Stomach</h3>
+                <ul>
+                    <li><span class="highlight">Structure:</span> J-shaped muscular sac</li>
+                    <li><span class="highlight">Gastric glands:</span> Produce gastric juice (HCl, pepsin, mucus)</li>
+                    <li><span class="highlight">Functions:</span> Protein digestion, food storage, killing bacteria</li>
+                    <li><span class="highlight">Sphincters:</span> Control entry and exit of food</li>
+                </ul>
+
+                <h3>Small Intestine</h3>
+                <ul>
+                    <li><span class="highlight">Length:</span> About 6 meters (duodenum, jejunum, ileum)</li>
+                    <li><span class="highlight">Villi and microvilli:</span> Increase surface area for absorption</li>
+                    <li><span class="highlight">Enzymes:</span> Pancreatic enzymes and brush border enzymes</li>
+                    <li><span class="highlight">Major site:</span> For digestion and absorption of nutrients</li>
+                </ul>
+
+                <h3>Large Intestine (Colon)</h3>
+                <ul>
+                    <li><span class="highlight">Length:</span> About 1.5 meters</li>
+                    <li><span class="highlight">Functions:</span> Water absorption, vitamin synthesis, feces formation</li>
+                    <li><span class="highlight">Microbiome:</span> Beneficial bacteria aid digestion</li>
+                    <li><span class="highlight">Rectum:</span> Temporary storage of feces</li>
+                </ul>
+
+                <h3>Accessory Organs</h3>
+                <ul>
+                    <li><span class="highlight">Liver:</span> Produces bile, detoxifies, stores vitamins</li>
+                    <li><span class="highlight">Gallbladder:</span> Stores and concentrates bile</li>
+                    <li><span class="highlight">Pancreas:</span> Produces digestive enzymes and hormones</li>
+                </ul>
+            </div>
+            <div class="notes-content ms">
+                <h3>Organ-organ Sistem Pencernaan</h3>
+                <p>Sistem pencernaan terdiri daripada beberapa organ yang bekerjasama untuk memecahkan makanan dan menyerap nutrien.</p>
+
+                <h3>Mulut (Kaviti Oral)</h3>
+                <ul>
+                    <li><span class="highlight">Gigi:</span> Pecahan mekanikal makanan</li>
+                    <li><span class="highlight">Lidah:</span> Mencampur makanan dengan air liur, deria rasa</li>
+                    <li><span class="highlight">Kelenjar air liur:</span> Menghasilkan air liur yang mengandungi amilase</li>
+                    <li><span class="highlight">Fungsi:</span> Pengingesan dan pencernaan awal</li>
+                </ul>
+
+                <h3>Farinks dan Esofagus</h3>
+                <ul>
+                    <li><span class="highlight">Farinks:</span> Laluan umum untuk makanan dan udara</li>
+                    <li><span class="highlight">Epiglottis:</span> Mencegah makanan memasuki trakea</li>
+                    <li><span class="highlight">Esofagus:</span> Tiub otot yang menyambung farinks ke perut</li>
+                    <li><span class="highlight">Peristalsis:</span> Kontraksi otot seperti gelombang</li>
+                </ul>
+
+                <h3>Perut</h3>
+                <ul>
+                    <li><span class="highlight">Struktur:</span> Kantung otot berbentuk J</li>
+                    <li><span class="highlight">Kelenjar gastrik:</span> Menghasilkan jus gastrik (HCl, pepsin, mukus)</li>
+                    <li><span class="highlight">Fungsi:</span> Pencernaan protein, penyimpanan makanan, membunuh bakteria</li>
+                    <li><span class="highlight">Sfinkter:</span> Mengawal kemasukan dan keluar makanan</li>
+                </ul>
+
+                <h3>Usus Kecil</h3>
+                <ul>
+                    <li><span class="highlight">Panjang:</span> Kira-kira 6 meter (duodenum, jejunum, ileum)</li>
+                    <li><span class="highlight">Vili dan mikrovili:</span> Meningkatkan luas permukaan untuk penyerapan</li>
+                    <li><span class="highlight">Enzim:</span> Enzim pankreas dan enzim sempadan berus</li>
+                    <li><span class="highlight">Tapak utama:</span> Untuk pencernaan dan penyerapan nutrien</li>
+                </ul>
+
+                <h3>Usus Besar (Kolon)</h3>
+                <ul>
+                    <li><span class="highlight">Panjang:</span> Kira-kira 1.5 meter</li>
+                    <li><span class="highlight">Fungsi:</span> Penyerapan air, sintesis vitamin, pembentukan najis</li>
+                    <li><span class="highlight">Mikrobiom:</span> Bakteria bermanfaat membantu pencernaan</li>
+                    <li><span class="highlight">Rektum:</span> Penyimpanan sementara najis</li>
+                </ul>
+
+                <h3>Organ Tambahan</h3>
+                <ul>
+                    <li><span class="highlight">Hati:</span> Menghasilkan hempedu, detoksifikasi, menyimpan vitamin</li>
+                    <li><span class="highlight">Pundi hempedu:</span> Menyimpan dan menumpukan hempedu</li>
+                    <li><span class="highlight">Pankreas:</span> Menghasilkan enzim pencernaan dan hormon</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-93" class="content-section">
+            <h2 class="section-title">9.3: Absorption | Penyerapan</h2>
+            <img src="Gambar Notes/Penyerapan.PNG" alt="Small Intestine Villi and Absorption" class="section-image">
+            <div class="notes-content en active">
+                <h3>What is Absorption?</h3>
+                <p>Absorption is the process by which digested nutrients pass through the intestinal wall into the bloodstream or lymphatic system for distribution to body cells.</p>
+
+                <h3>Types of Absorption</h3>
+                <ul>
+                    <li><span class="highlight">Passive diffusion:</span> Movement down concentration gradient (no energy required)</li>
+                    <li><span class="highlight">Facilitated diffusion:</span> Carrier proteins help movement down gradient</li>
+                    <li><span class="highlight">Active transport:</span> Movement against gradient using energy (ATP)</li>
+                    <li><span class="highlight">Endocytosis:</span> Large molecules engulfed by cell membrane</li>
+                </ul>
+
+                <h3>Absorption in Different Parts</h3>
+                <ul>
+                    <li><span class="highlight">Mouth:</span> Some drugs, alcohol, vitamin B12</li>
+                    <li><span class="highlight">Stomach:</span> Water, alcohol, aspirin, some ions</li>
+                    <li><span class="highlight">Small intestine:</span> Most nutrients (90% of absorption)</li>
+                    <li><span class="highlight">Large intestine:</span> Water, electrolytes, vitamins K and B</li>
+                </ul>
+
+                <h3>Mechanisms of Nutrient Absorption</h3>
+                <ul>
+                    <li><span class="highlight">Monosaccharides:</span> Active transport via sodium-glucose cotransporter</li>
+                    <li><span class="highlight">Amino acids:</span> Active transport with sodium</li>
+                    <li><span class="highlight">Fatty acids:</span> Passive diffusion into lacteals</li>
+                    <li><span class="highlight">Vitamins:</span> Various mechanisms (active, passive, facilitated)</li>
+                </ul>
+
+                <h3>Factors Affecting Absorption</h3>
+                <ul>
+                    <li>Surface area of intestinal wall</li>
+                    <li>Blood flow to intestines</li>
+                    <li>Presence of digestive enzymes</li>
+                    <li>pH of intestinal contents</li>
+                    <li>Health of intestinal mucosa</li>
+                </ul>
+
+                <h3>Villi and Microvilli Structure</h3>
+                <ul>
+                    <li><span class="highlight">Villi:</span> Finger-like projections increasing surface area 10x</li>
+                    <li><span class="highlight">Microvilli:</span> Further increase surface area by 20x</li>
+                    <li><span class="highlight">Epithelial cells:</span> Contain transport proteins and enzymes</li>
+                    <li><span class="highlight">Lacteals:</span> Lymphatic vessels for fat absorption</li>
+                    <li><span class="highlight">Capillaries:</span> Blood vessels for nutrient transport</li>
+                </ul>
+
+                <h3>Absorption Disorders</h3>
+                <ul>
+                    <li><span class="highlight">Malabsorption:</span> Reduced nutrient absorption</li>
+                    <li><span class="highlight">Celiac disease:</span> Gluten intolerance affecting villi</li>
+                    <li><span class="highlight">Lactose intolerance:</span> Lack of lactase enzyme</li>
+                    <li><span class="highlight">Vitamin deficiencies:</span> Due to poor absorption</li>
+                </ul>
+            </div>
+            <div class="notes-content ms">
+                <h3>Apakah Penyerapan?</h3>
+                <p>Penyerapan adalah proses di mana nutrien yang dicerna melalui dinding usus ke dalam aliran darah atau sistem limfa untuk diedarkan ke sel badan.</p>
+
+                <h3>Jenis-jenis Penyerapan</h3>
+                <ul>
+                    <li><span class="highlight">Resapan pasif:</span> Pergerakan mengikut kecerunan kepekatan (tiada tenaga diperlukan)</li>
+                    <li><span class="highlight">Resapan difasilitasi:</span> Protein pembawa membantu pergerakan mengikut kecerunan</li>
+                    <li><span class="highlight">Transpor aktif:</span> Pergerakan menentang kecerunan menggunakan tenaga (ATP)</li>
+                    <li><span class="highlight">Endositosis:</span> Molekul besar ditelan oleh membran sel</li>
+                </ul>
+
+                <h3>Penyerapan di Bahagian Berbeza</h3>
+                <ul>
+                    <li><span class="highlight">Mulut:</span> Beberapa ubat, alkohol, vitamin B12</li>
+                    <li><span class="highlight">Perut:</span> Air, alkohol, aspirin, beberapa ion</li>
+                    <li><span class="highlight">Usus kecil:</span> Kebanyakan nutrien (90% penyerapan)</li>
+                    <li><span class="highlight">Usus besar:</span> Air, elektrolit, vitamin K dan B</li>
+                </ul>
+
+                <h3>Mekanisme Penyerapan Nutrien</h3>
+                <ul>
+                    <li><span class="highlight">Monosakarida:</span> Transpor aktif melalui kotransporter natrium-glukosa</li>
+                    <li><span class="highlight">Asid amino:</span> Transpor aktif dengan natrium</li>
+                    <li><span class="highlight">Asid lemak:</span> Resapan pasif ke dalam lakteal</li>
+                    <li><span class="highlight">Vitamin:</span> Pelbagai mekanisme (aktif, pasif, difasilitasi)</li>
+                </ul>
+
+                <h3>Faktor yang Mempengaruhi Penyerapan</h3>
+                <ul>
+                    <li>Keluasan permukaan dinding usus</li>
+                    <li>Aliran darah ke usus</li>
+                    <li>Kewujudan enzim pencernaan</li>
+                    <li>pH kandungan usus</li>
+                    <li>Kesihatan mukosa usus</li>
+                </ul>
+
+                <h3>Struktur Vili dan Mikrovili</h3>
+                <ul>
+                    <li><span class="highlight">Vili:</span> Unjuran seperti jari meningkatkan luas permukaan 10x</li>
+                    <li><span class="highlight">Mikrovili:</span> Meningkatkan lagi luas permukaan sebanyak 20x</li>
+                    <li><span class="highlight">Sel epitelium:</span> Mengandungi protein pengangkut dan enzim</li>
+                    <li><span class="highlight">Lakteal:</span> Salur limfa untuk penyerapan lemak</li>
+                    <li><span class="highlight">Kapilari:</span> Salur darah untuk pengangkutan nutrien</li>
+                </ul>
+
+                <h3>Gangguan Penyerapan</h3>
+                <ul>
+                    <li><span class="highlight">Malabsorpsi:</span> Pengurangan penyerapan nutrien</li>
+                    <li><span class="highlight">Penyakit seliak:</span> Intoleransi gluten mempengaruhi vili</li>
+                    <li><span class="highlight">Intoleransi laktosa:</span> Kekurangan enzim laktase</li>
+                    <li><span class="highlight">Kekurangan vitamin:</span> Disebabkan penyerapan yang lemah</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-94" class="content-section">
+            <h2 class="section-title">9.4: Assimilation | Asimilasi</h2>
+            <img src="Gambar Notes/Asimilasi.PNG" alt="Nutrient Assimilation Process" class="section-image">
+            <div class="notes-content en active">
+                <h3>What is Assimilation?</h3>
+                <p>Assimilation is the process by which absorbed nutrients are taken up by body cells and incorporated into cellular structures or used for energy production.</p>
+
+                <h3>Carbohydrate Assimilation</h3>
+                <ul>
+                    <li><span class="highlight">Glucose transport:</span> Into cells via GLUT transporters</li>
+                    <li><span class="highlight">Glycogenesis:</span> Glucose converted to glycogen for storage</li>
+                    <li><span class="highlight">Glycolysis:</span> Breakdown for ATP production</li>
+                    <li><span class="highlight">Citric acid cycle:</span> Complete oxidation in mitochondria</li>
+                </ul>
+
+                <h3>Protein Assimilation</h3>
+                <ul>
+                    <li><span class="highlight">Amino acid pool:</span> Available amino acids in body</li>
+                    <li><span class="highlight">Protein synthesis:</span> Building new proteins (enzymes, hormones, etc.)</li>
+                    <li><span class="highlight">Transamination:</span> Amino group transfer</li>
+                    <li><span class="highlight">Deamination:</span> Removal of amino groups for energy</li>
+                </ul>
+
+                <h3>Lipid Assimilation</h3>
+                <ul>
+                    <li><span class="highlight">Chylomicrons:</span> Transport fats in lymphatic system</li>
+                    <li><span class="highlight">Lipoprotein lipase:</span> Breaks down triglycerides</li>
+                    <li><span class="highlight">Adipose tissue:</span> Fat storage</li>
+                    <li><span class="highlight">Cell membranes:</span> Phospholipid incorporation</li>
+                </ul>
+
+                <h3>Vitamin and Mineral Assimilation</h3>
+                <ul>
+                    <li><span class="highlight">Vitamin storage:</span> Liver stores vitamins A, D, E, K, B12</li>
+                    <li><span class="highlight">Mineral functions:</span> Calcium for bones, iron for hemoglobin</li>
+                    <li><span class="highlight">Cofactor roles:</span> Vitamins as enzyme helpers</li>
+                </ul>
+
+                <h3>Energy Production</h3>
+                <ul>
+                    <li><span class="highlight">ATP synthesis:</span> Cellular energy currency</li>
+                    <li><span class="highlight">Metabolic pathways:</span> Glycolysis, Krebs cycle, electron transport</li>
+                    <li><span class="highlight">Hormonal regulation:</span> Insulin and glucagon control</li>
+                </ul>
+
+                <h3>Metabolic Rate and Energy Balance</h3>
+                <ul>
+                    <li><span class="highlight">Basal metabolic rate:</span> Energy used at rest</li>
+                    <li><span class="highlight">Thermic effect of food:</span> Energy used for digestion</li>
+                    <li><span class="highlight">Physical activity:</span> Exercise and daily movement</li>
+                    <li><span class="highlight">Energy balance:</span> Calories in vs calories out</li>
+                </ul>
+
+                <h3>Nutrient Storage and Reserves</h3>
+                <ul>
+                    <li><span class="highlight">Glycogen stores:</span> Liver (100-120g) and muscles (400-500g)</li>
+                    <li><span class="highlight">Fat reserves:</span> Unlimited storage capacity</li>
+                    <li><span class="highlight">Protein reserves:</span> Limited, used only in starvation</li>
+                    <li><span class="highlight">Vitamin reserves:</span> Vary by vitamin type</li>
+                </ul>
+            </div>
+            <div class="notes-content ms">
+                <h3>Apakah Asimilasi?</h3>
+                <p>Asimilasi adalah proses di mana nutrien yang diserap diambil oleh sel badan dan dimasukkan ke dalam struktur sel atau digunakan untuk penghasilan tenaga.</p>
+
+                <h3>Asimilasi Karbohidrat</h3>
+                <ul>
+                    <li><span class="highlight">Transpor glukosa:</span> Ke dalam sel melalui pengangkut GLUT</li>
+                    <li><span class="highlight">Glikogenesis:</span> Glukosa ditukar kepada glikogen untuk simpanan</li>
+                    <li><span class="highlight">Glikolisis:</span> Pecahan untuk penghasilan ATP</li>
+                    <li><span class="highlight">Kitaran asid sitrik:</span> Pengoksidaan lengkap dalam mitokondria</li>
+                </ul>
+
+                <h3>Asimilasi Protein</h3>
+                <ul>
+                    <li><span class="highlight">Kolam asid amino:</span> Asid amino yang tersedia dalam badan</li>
+                    <li><span class="highlight">Sintesis protein:</span> Membina protein baru (enzim, hormon, dll.)</li>
+                    <li><span class="highlight">Transaminasi:</span> Pemindahan kumpulan amino</li>
+                    <li><span class="highlight">Deaminasi:</span> Penyingkiran kumpulan amino untuk tenaga</li>
+                </ul>
+
+                <h3>Asimilasi Lipid</h3>
+                <ul>
+                    <li><span class="highlight">Kilomikron:</span> Mengangkut lemak dalam sistem limfa</li>
+                    <li><span class="highlight">Lipase lipoprotein:</span> Memecahkan trigliserida</li>
+                    <li><span class="highlight">Tisu adipose:</span> Simpanan lemak</li>
+                    <li><span class="highlight">Membran sel:</span> Penggabungan fosfolipid</li>
+                </ul>
+
+                <h3>Asimilasi Vitamin dan Mineral</h3>
+                <ul>
+                    <li><span class="highlight">Simpanan vitamin:</span> Hati menyimpan vitamin A, D, E, K, B12</li>
+                    <li><span class="highlight">Fungsi mineral:</span> Kalsium untuk tulang, besi untuk hemoglobin</li>
+                    <li><span class="highlight">Peranan kofaktor:</span> Vitamin sebagai pembantu enzim</li>
+                </ul>
+
+                <h3>Penghasilan Tenaga</h3>
+                <ul>
+                    <li><span class="highlight">Sintesis ATP:</span> Mata wang tenaga sel</li>
+                    <li><span class="highlight">Laluan metabolik:</span> Glikolisis, kitaran Krebs, pengangkutan elektron</li>
+                    <li><span class="highlight">Peraturan hormon:</span> Kawalan insulin dan glukagon</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-95" class="content-section">
+            <h2 class="section-title">9.5: Excretion | Penyahtinjaan</h2>
+            <img src="Gambar Notes/Penyahtinjaan.PNG" alt="Waste Excretion and Defecation" class="section-image">
+            <div class="notes-content en active">
+                <h3>What is Excretion?</h3>
+                <p>Excretion is the process of removing metabolic waste products and excess substances from the body to maintain homeostasis.</p>
+
+                <h3>Digestive System Excretion</h3>
+                <ul>
+                    <li><span class="highlight">Feces formation:</span> Undigested material, bacteria, water, electrolytes</li>
+                    <li><span class="highlight">Defecation:</span> Elimination of feces through the anus</li>
+                    <li><span class="highlight">Rectal storage:</span> Temporary storage before elimination</li>
+                </ul>
+
+                <h3>Composition of Feces</h3>
+                <ul>
+                    <li><span class="highlight">Water:</span> 75% of feces weight</li>
+                    <li><span class="highlight">Bacteria:</span> Intestinal microorganisms</li>
+                    <li><span class="highlight">Fiber:</span> Indigestible plant material</li>
+                    <li><span class="highlight">Bile pigments:</span> Give feces brown color</li>
+                    <li><span class="highlight">Mucus:</span> Lubricates intestinal tract</li>
+                </ul>
+
+                <h3>Defecation Process</h3>
+                <ul>
+                    <li><span class="highlight">Mass movement:</span> Strong peristaltic waves</li>
+                    <li><span class="highlight">Rectal distension:</span> Stimulates defecation reflex</li>
+                    <li><span class="highlight">Internal sphincter:</span> Involuntary relaxation</li>
+                    <li><span class="highlight">External sphincter:</span> Voluntary control</li>
+                </ul>
+
+                <h3>Other Excretory Systems</h3>
+                <ul>
+                    <li><span class="highlight">Urinary system:</span> Removes nitrogenous wastes, excess salts</li>
+                    <li><span class="highlight">Respiratory system:</span> Eliminates CO2 and water vapor</li>
+                    <li><span class="highlight">Skin:</span> Sweat glands remove water, salts, urea</li>
+                    <li><span class="highlight">Liver:</span> Converts ammonia to urea</li>
+                </ul>
+
+                <h3>Importance of Excretion</h3>
+                <ul>
+                    <li>Maintains chemical balance in body</li>
+                    <li>Prevents toxic buildup</li>
+                    <li>Regulates water and electrolyte balance</li>
+                    <li>Removes metabolic waste products</li>
+                </ul>
+
+                <h3>Digestive Disorders Related to Excretion</h3>
+                <ul>
+                    <li><span class="highlight">Hemorrhoids:</span> Swollen veins in rectum and anus</li>
+                    <li><span class="highlight">Diverticulitis:</span> Inflammation of small pouches in colon wall</li>
+                    <li><span class="highlight">Irritable Bowel Syndrome (IBS):</span> Chronic digestive disorder affecting bowel habits</li>
+                    <li><span class="highlight">Inflammatory Bowel Disease (IBD):</span> Chronic inflammation of digestive tract</li>
+                </ul>
+
+                <h3>Role of Fiber in Excretion</h3>
+                <ul>
+                    <li><span class="highlight">Soluble fiber:</span> Dissolves in water, forms gel-like substance</li>
+                    <li><span class="highlight">Insoluble fiber:</span> Does not dissolve, adds bulk to stool</li>
+                    <li><span class="highlight">Sources:</span> Fruits, vegetables, whole grains, legumes</li>
+                    <li><span class="highlight">Benefits:</span> Prevents constipation, regulates bowel movements</li>
+                </ul>
+            </div>
+            <div class="notes-content ms">
+                <h3>Apakah Penyahtinjaan?</h3>
+                <p>Penyahtinjaan adalah proses mengeluarkan produk sisa metabolik dan bahan berlebihan dari badan untuk mengekalkan homeostasis.</p>
+
+                <h3>Penyahtinjaan Sistem Pencernaan</h3>
+                <ul>
+                    <li><span class="highlight">Pembentukan najis:</span> Bahan tidak dicerna, bakteria, air, elektrolit</li>
+                    <li><span class="highlight">Pembuangan:</span> Penghapusan najis melalui dubur</li>
+                    <li><span class="highlight">Simpanan rektum:</span> Simpanan sementara sebelum penghapusan</li>
+                </ul>
+
+                <h3>Komposisi Najis</h3>
+                <ul>
+                    <li><span class="highlight">Air:</span> 75% berat najis</li>
+                    <li><span class="highlight">Bakteria:</span> Mikroorganisma usus</li>
+                    <li><span class="highlight">Serat:</span> Bahan tumbuhan yang tidak boleh dicerna</li>
+                    <li><span class="highlight">Pigmen hempedu:</span> Memberi warna coklat pada najis</li>
+                    <li><span class="highlight">Mukus:</span> Melincirkan saluran usus</li>
+                </ul>
+
+                <h3>Proses Pembuangan</h3>
+                <ul>
+                    <li><span class="highlight">Pergerakan jisim:</span> Gelombang peristaltik kuat</li>
+                    <li><span class="highlight">Distensi rektum:</span> Merangsang refleks pembuangan</li>
+                    <li><span class="highlight">Sfinkter dalaman:</span> Relaksasi tidak sukarela</li>
+                    <li><span class="highlight">Sfinkter luaran:</span> Kawalan sukarela</li>
+                </ul>
+
+                <h3>Sistem Penyahtinjaan Lain</h3>
+                <ul>
+                    <li><span class="highlight">Sistem kencing:</span> Mengeluarkan sisa nitrogen, garam berlebihan</li>
+                    <li><span class="highlight">Sistem pernafasan:</span> Menghapuskan CO2 dan wap air</li>
+                    <li><span class="highlight">Kulit:</span> Kelenjar peluh mengeluarkan air, garam, urea</li>
+                    <li><span class="highlight">Hati:</span> Menukar ammonia kepada urea</li>
+                </ul>
+
+                <h3>Kepentingan Penyahtinjaan</h3>
+                <ul>
+                    <li>Mengekalkan keseimbangan kimia dalam badan</li>
+                    <li>Mencegah pengumpulan toksik</li>
+                    <li>Mengawal keseimbangan air dan elektrolit</li>
+                    <li>Mengeluarkan produk sisa metabolik</li>
+                </ul>
+
+                <h3>Gangguan Pencernaan Berkaitan Penyahtinjaan</h3>
+                <ul>
+                    <li><span class="highlight">Buasir:</span> Urin bengkak dalam rektum dan dubur</li>
+                    <li><span class="highlight">Divertikulitis:</span> Keradangan kantung kecil dalam dinding kolon</li>
+                    <li><span class="highlight">Sindrom Usus Rangsang (IBS):</span> Gangguan pencernaan kronik yang mempengaruhi tabiat usus</li>
+                    <li><span class="highlight">Penyakit Radang Usus (IBD):</span> Keradangan kronik saluran pencernaan</li>
+                </ul>
+
+                <h3>Peranan Serat dalam Penyahtinjaan</h3>
+                <ul>
+                    <li><span class="highlight">Serat larut:</span> Larut dalam air, membentuk bahan seperti gel</li>
+                    <li><span class="highlight">Serat tidak larut:</span> Tidak larut, menambah isipadu pada najis</li>
+                    <li><span class="highlight">Sumber:</span> Buah-buahan, sayur-sayuran, bijirin penuh, kekacang</li>
+                    <li><span class="highlight">Faedah:</span> Mencegah sembelit, mengawal pergerakan usus</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-96" class="content-section">
+            <h2 class="section-title">9.6: Balanced Nutrition | Gizi Seimbang</h2>
+            <img src="Gambar Notes/Gizi Seimbang.png" alt="Balanced Nutrition and Food Guide" class="section-image">
+            <div class="notes-content en active">
+                <h3>What is Balanced Nutrition?</h3>
+                <p>Balanced nutrition refers to consuming the right proportions of different nutrients to maintain optimal health, growth, and body functions. A balanced diet includes all essential nutrients in appropriate amounts.</p>
+
+                <h3>Components of Balanced Diet</h3>
+                <ul>
+                    <li><span class="highlight">Carbohydrates (50-60%):</span> Rice, bread, cereals - main energy source</li>
+                    <li><span class="highlight">Proteins (10-15%):</span> Meat, fish, eggs, legumes - growth and repair</li>
+                    <li><span class="highlight">Fats (20-30%):</span> Oils, nuts, avocados - energy and hormone production</li>
+                    <li><span class="highlight">Vitamins & Minerals (5%):</span> Fruits, vegetables - essential for metabolism</li>
+                    <li><span class="highlight">Fiber (5%):</span> Whole grains, vegetables - digestive health</li>
+                    <li><span class="highlight">Water:</span> 6-8 glasses daily - hydration</li>
+                </ul>
+
+                <h3>Food Pyramid Guide</h3>
+                <ul>
+                    <li><span class="highlight">Base (Carbohydrates):</span> 6-11 servings of grains, bread, cereals</li>
+                    <li><span class="highlight">Second Level (Vegetables & Fruits):</span> 3-5 servings vegetables, 2-4 servings fruits</li>
+                    <li><span class="highlight">Third Level (Protein & Dairy):</span> 2-3 servings protein, 2-3 servings dairy</li>
+                    <li><span class="highlight">Tip (Fats & Sugars):</span> Use sparingly</li>
+                </ul>
+
+                <h3>Benefits of Balanced Nutrition</h3>
+                <ul>
+                    <li>Maintains ideal body weight</li>
+                    <li>Prevents chronic diseases (diabetes, heart disease, obesity)</li>
+                    <li>Improves immune function</li>
+                    <li>Enhances mental alertness and concentration</li>
+                    <li>Supports growth and development in adolescents</li>
+                    <li>Increases energy and physical performance</li>
+                </ul>
+
+                <h3>Tips for Achieving Balanced Nutrition</h3>
+                <ul>
+                    <li>Eat a variety of foods from all food groups</li>
+                    <li>Control portion sizes</li>
+                    <li>Limit sugar, salt, and saturated fats</li>
+                    <li>Choose whole grains over refined grains</li>
+                    <li>Include colorful fruits and vegetables</li>
+                    <li>Drink plenty of water</li>
+                    <li>Limit processed and fast foods</li>
+                </ul>
+
+                <h3>Age-Appropriate Nutritional Needs</h3>
+                <ul>
+                    <li><span class="highlight">Adults:</span> Maintenance of body functions</li>
+                    <li><span class="highlight">Adolescents:</span> Growth and development</li>
+                    <li><span class="highlight">Pregnant/Lactating Women:</span> Increased nutrients</li>
+                    <li><span class="highlight">Elderly:</span> Nutrient-dense foods for reduced intake</li>
+                </ul>
+            </div>
+            <div class="notes-content ms">
+                <h3>Apakah Gizi Seimbang?</h3>
+                <p>Gizi seimbang merujuk kepada pengambilan bahagian yang betul daripada nutrien berbeza untuk mengekalkan kesihatan yang optimum, pertumbuhan, dan fungsi badan. Diet seimbang termasuk semua nutrien penting dalam jumlah yang sesuai.</p>
+
+                <h3>Komponen Diet Seimbang</h3>
+                <ul>
+                    <li><span class="highlight">Karbohidrat (50-60%):</span> Beras, roti, bijirin - sumber tenaga utama</li>
+                    <li><span class="highlight">Protein (10-15%):</span> Daging, ikan, telur, kekacang - pertumbuhan dan pembaikan</li>
+                    <li><span class="highlight">Lemak (20-30%):</span> Minyak, kacang, avokado - tenaga dan pengeluaran hormon</li>
+                    <li><span class="highlight">Vitamin & Mineral (5%):</span> Buah-buahan, sayur-sayuran - penting untuk metabolisme</li>
+                    <li><span class="highlight">Serat (5%):</span> Bijirin penuh, sayur-sayuran - kesihatan pencernaan</li>
+                    <li><span class="highlight">Air:</span> 6-8 gelas sehari - penghidratan</li>
+                </ul>
+
+                <h3>Panduan Piramid Makanan</h3>
+                <ul>
+                    <li><span class="highlight">Tapak (Karbohidrat):</span> 6-11 porsi bijirin, roti, bijirin</li>
+                    <li><span class="highlight">Peringkat Kedua (Sayur-sayuran & Buah-buahan):</span> 3-5 porsi sayur-sayuran, 2-4 porsi buah-buahan</li>
+                    <li><span class="highlight">Peringkat Ketiga (Protein & Tenusu):</span> 2-3 porsi protein, 2-3 porsi tenusu</li>
+                    <li><span class="highlight">Puncak (Lemak & Gula):</span> Gunakan dengan hemat</li>
+                </ul>
+
+                <h3>Faedah Gizi Seimbang</h3>
+                <ul>
+                    <li>Mengekalkan berat badan ideal</li>
+                    <li>Mencegah penyakit kronik (diabetes, penyakit jantung, obesiti)</li>
+                    <li>Meningkatkan fungsi imun</li>
+                    <li>Meningkatkan ketajaman mental dan kepekatan</li>
+                    <li>Menyokong pertumbuhan dan perkembangan dalam remaja</li>
+                    <li>Meningkatkan tenaga dan prestasi fizikal</li>
+                </ul>
+
+                <h3>Petua untuk Mencapai Gizi Seimbang</h3>
+                <ul>
+                    <li>Makan pelbagai makanan dari semua kumpulan makanan</li>
+                    <li>Kawalan saiz porsi</li>
+                    <li>Hadkan gula, garam, dan lemak tepu</li>
+                    <li>Pilih bijirin penuh daripada bijirin halus</li>
+                    <li>Sertakan buah-buahan dan sayur-sayuran berwarna-warni</li>
+                    <li>Minum banyak air</li>
+                    <li>Hadkan makanan proses dan makanan pantas</li>
+                </ul>
+
+                <h3>Keperluan Pemakanan Sesuai Umur</h3>
+                <ul>
+                    <li><span class="highlight">Dewasa:</span> Penyelenggaraan fungsi badan</li>
+                    <li><span class="highlight">Remaja:</span> Pertumbuhan dan perkembangan</li>
+                    <li><span class="highlight">Wanita Hamil/Menyusui:</span> Peningkatan nutrien</li>
+                    <li><span class="highlight">Warga Tua:</span> Makanan yang kaya nutrien untuk pengambilan berkurangan</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-97" class="content-section">
+            <h2 class="section-title">9.7: Health Issues Related to Digestive System and Eating Habits | Isu Kesihatan Berkaitan Sistem Pencernaan dan Tabiat Pemakanan</h2>
+            <img src="Gambar Notes/Kesihatan.PNG" alt="Healthy Eating and Digestive Health" class="section-image">
+            <div class="notes-content en active">
+                <h3>Common Digestive Health Issues</h3>
+                <p>Various conditions can affect the digestive system, impacting digestion and nutrient absorption.</p>
+
+                <h3>Indigestion (Dyspepsia)</h3>
+                <ul>
+                    <li><span class="highlight">Symptoms:</span> Bloating, belching, nausea, abdominal discomfort</li>
+                    <li><span class="highlight">Causes:</span> Overeating, eating too quickly, fatty foods, stress</li>
+                    <li><span class="highlight">Prevention:</span> Eat slowly, avoid trigger foods, manage stress</li>
+                </ul>
+
+                <h3>Constipation</h3>
+                <ul>
+                    <li><span class="highlight">Symptoms:</span> Infrequent bowel movements, hard stools, straining</li>
+                    <li><span class="highlight">Causes:</span> Low fiber diet, dehydration, lack of exercise</li>
+                    <li><span class="highlight">Treatment:</span> Increase fiber, drink water, exercise regularly</li>
+                </ul>
+
+                <h3>Diarrhea</h3>
+                <ul>
+                    <li><span class="highlight">Symptoms:</span> Loose, watery stools, abdominal cramps</li>
+                    <li><span class="highlight">Causes:</span> Infections, food poisoning, food intolerances</li>
+                    <li><span class="highlight">Management:</span> Oral rehydration, avoid certain foods temporarily</li>
+                </ul>
+
+                <h3>Food Poisoning</h3>
+                <ul>
+                    <li><span class="highlight">Symptoms:</span> Vomiting, diarrhea, abdominal pain, fever</li>
+                    <li><span class="highlight">Prevention:</span> Proper food storage, cooking temperatures, hand hygiene</li>
+                    <li><span class="highlight">Bacteria:</span> Salmonella, E. coli, Campylobacter</li>
+                </ul>
+
+                <h3>H
+
+                <h3>Specific Digestive Disorders</h3>
+                <ul>
+                    <li><span class="highlight">Gastroesophageal Reflux Disease (GERD):</span> Acid reflux causing heartburn</li>
+                    <li><span class="highlight">Peptic Ulcers:</span> Sores in stomach or duodenum lining</li>
+                    <li><span class="highlight">Gallstones:</span> Hardened deposits in gallbladder</li>
+                    <li><span class="highlight">Pancreatitis:</span> Inflammation of the pancreas</li>
+                    <li><span class="highlight">Celiac Disease:</span> Autoimmune disorder triggered by gluten</li>
+                </ul>
+
+                <h3>Nutritional Deficiencies and Digestive Health</h3>
+                <ul>
+                    <li><span class="highlight">Iron deficiency anemia:</span> Due to poor absorption in digestive disorders</li>
+                    <li><span class="highlight">Vitamin B12 deficiency:</span> Common in pernicious anemia and malabsorption</li>
+                    <li><span class="highlight">Calcium and vitamin D deficiency:</span> Due to fat malabsorption</li>
+                    <li><span class="highlight">Protein malnutrition:</span> Resulting from chronic digestive diseases</li>
+                </ul>ealthy Eating Habits</h3>
+                <ul>
+                    <li><span class="highlight">Balanced diet:</span> Include all food groups</li>
+                    <li><span class="highlight">Fiber intake:</span> Fruits, vegetables, whole grains</li>
+                    <li><span class="highlight">Hydration:</span> Drink adequate water daily</li>
+                    <li><span class="highlight">Portion control:</span> Avoid overeating</li>
+                    <li><span class="highlight">Regular meals:</span> Eat at consistent times</li>
+                </ul>
+
+                <h3>Digestive Health Maintenance</h3>
+                <ul>
+                    <li>Regular physical activity</li>
+                    <li>Adequate sleep and stress management</li>
+                    <li>Avoid smoking and excessive alcohol</li>
+                    <li>Regular health check-ups</li>
+                    <li>Practice good hygiene</li>
+                </ul>
+            </div>
+            <div class="notes-content ms">
+                <h3>Isu Kesihatan Sistem Pencernaan Biasa</h3>
+                <p>Pelbagai keadaan boleh menjejaskan sistem pencernaan, mempengaruhi pencernaan dan penyerapan nutrien.</p>
+
+                <h3>Indigestion (Dyspepsia)</h3>
+                <ul>
+                    <li><span class="highlight">Simptom:</span> Kembung, sendawa, loya, ketidakselesaan perut</li>
+                    <li><span class="highlight">Punca:</span> Makan berlebihan, makan terlalu cepat, makanan berlemak, tekanan</li>
+                    <li><span class="highlight">Pencegahan:</span> Makan perlahan, elak makanan pencetus, urus tekanan</li>
+                </ul>
+
+                <h3>Sembelit</h3>
+                <ul>
+                    <li><span class="highlight">Simptom:</span> Pergerakan usus jarang, najis keras, menekan</li>
+                    <li><span class="highlight">Punca:</span> Diet rendah serat, dehidrasi, kurang senaman</li>
+                    <li><span class="highlight">Rawatan:</span> Tingkatkan serat, minum air, senaman secara tetap</li>
+                </ul>
+
+                <h3>Cirit-birit</h3>
+                <ul>
+                    <li><span class="highlight">Simptom:</span> Najis longgar, berair, kekejangan perut</li>
+                    <li><span class="highlight">Punca:</span> Jangkitan, keracunan makanan, intoleransi makanan</li>
+                    <li><span class="highlight">Pengurusan:</span> Penghidratan oral, elak makanan tertentu buat sementara</li>
+                </ul>
+
+                <h3>Keracunan Makanan</h3>
+                <ul>
+                    <li><span class="highlight">Simptom:</span> Muntah, cirit-birit, sakit perut, demam</li>
+                    <li><span class="highlight">Pencegahan:</span> Simpanan makanan yang betul, suhu memasak, kebersihan tangan</li>
+                    <li><span class="highlight">Bakteria:</span> Salmonella, E. coli, Campylobacter</li>
+                </ul>
+
+                <h3>Tabiat Makan Sihat</h3>
+                <ul>
+                    <li><span class="highlight">Diet seimbang:</span> Sertakan semua kumpulan makanan</li>
+                    <li><span class="highlight">Pengambilan serat:</span> Buah-buahan, sayur-sayuran, bijirin penuh</li>
+                    <li><span class="highlight">Penghidratan:</span> Minum air yang mencukupi setiap hari</li>
+                    <li><span class="highlight">Kawalan bahagian:</span> Elak makan berlebihan</li>
+                    <li><span class="highlight">Makanan tetap:</span> Makan pada masa yang konsisten</li>
+                </ul>
+
+                <h3>Penyelenggaraan Kesihatan Pencernaan</h3>
+                <ul>
+                    <li>Aktiviti fizikal yang tetap</li>
+                    <li>Tidur dan pengurusan tekanan yang mencukupi</li>
+                    <li>Elak merokok dan alkohol berlebihan</li>
+                    <li>Pemeriksaan kesihatan tetap</li>
+                    <li>Amalkan kebersihan yang baik</li>
+                </ul>
+
+                <h3>Gangguan Pencernaan Spesifik</h3>
+                <ul>
+                    <li><span class="highlight">Penyakit Refluks Gastroesophageal (GERD):</span> Refluks asid menyebabkan pedih ulu hati</li>
+                    <li><span class="highlight">Ulser Peptik:</span> Luka pada lapisan perut atau duodenum</li>
+                    <li><span class="highlight">Batu Karang:</span> Deposit keras dalam pundi hempedu</li>
+                    <li><span class="highlight">Pancreatitis:</span> Keradangan pankreas</li>
+                    <li><span class="highlight">Penyakit Celiac:</span> Gangguan autoimun dicetuskan oleh gluten</li>
+                </ul>
+
+                <h3>Kekurangan Nutrisi dan Kesihatan Pencernaan</h3>
+                <ul>
+                    <li><span class="highlight">Anemia kekurangan zat besi:</span> Disebabkan penyerapan yang lemah dalam gangguan pencernaan</li>
+                    <li><span class="highlight">Kekurangan vitamin B12:</span> Biasa dalam anemia pernicious dan malabsorpsi</li>
+                    <li><span class="highlight">Kekurangan kalsium dan vitamin D:</span> Disebabkan malabsorpsi lemak</li>
+                    <li><span class="highlight">Malnutrisi protein:</span> Hasil daripada penyakit pencernaan kronik</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => section.classList.remove('active'));
+
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab-button');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        function setLanguage(lang) {
+            // Remove active class from all language buttons
+            const langBtns = document.querySelectorAll('.lang-btn');
+            langBtns.forEach(btn => btn.classList.remove('active'));
+
+            // Add active class to selected language button
+            event.target.classList.add('active');
+
+            // Hide all notes content
+            const allNotes = document.querySelectorAll('.notes-content');
+            allNotes.forEach(note => note.classList.remove('active'));
+
+            // Show notes content for selected language
+            const selectedNotes = document.querySelectorAll(`.notes-content.${lang}`);
+            selectedNotes.forEach(note => note.classList.add('active'));
+        }
+
+        // Set default language to English on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setLanguage('en');
+        });
+
+        // Image Modal Functionality
+        let currentZoom = 1;
+        let isDragging = false;
+        let startX, startY, initialX, initialY;
+        let modalImage;
+
+        function openImageModal(imgSrc, altText) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            const zoomLevel = document.getElementById('zoomLevel');
+
+            modal.style.display = 'block';
+            modalImg.src = imgSrc;
+            modalImg.alt = altText;
+            modalImg.style.transform = 'scale(1)';
+            currentZoom = 1;
+            zoomLevel.textContent = '100%';
+
+            // Reset position
+            modalImg.style.transform = 'scale(1) translate(0, 0)';
+            modalImage = modalImg;
+
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            currentZoom = 1;
+        }
+
+        function zoomIn() {
+            if (currentZoom < 3) {
+                currentZoom += 0.25;
+                updateZoom();
+            }
+        }
+
+        function zoomOut() {
+            if (currentZoom > 0.5) {
+                currentZoom -= 0.25;
+                updateZoom();
+            }
+        }
+
+        function updateZoom() {
+            if (modalImage) {
+                modalImage.style.transform = `scale(${currentZoom})`;
+                document.getElementById('zoomLevel').textContent = Math.round(currentZoom * 100) + '%';
+            }
+        }
+
+        // Mouse wheel zoom
+        document.addEventListener('wheel', function(e) {
+            const modal = document.getElementById('imageModal');
+            if (modal.style.display === 'block') {
+                e.preventDefault();
+                if (e.deltaY < 0) {
+                    zoomIn();
+                } else {
+                    zoomOut();
+                }
+            }
+        });
+
+        // Dragging functionality
+        document.addEventListener('mousedown', function(e) {
+            const modal = document.getElementById('imageModal');
+            if (modal.style.display === 'block' && e.target.id === 'modalImage') {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                const transform = modalImage.style.transform || '';
+                const translateMatch = transform.match(/translate\(([^,]+),\s*([^)]+)\)/);
+                if (translateMatch) {
+                    initialX = parseFloat(translateMatch[1]);
+                    initialY = parseFloat(translateMatch[2]);
+                } else {
+                    initialX = 0;
+                    initialY = 0;
+                }
+            }
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (isDragging && modalImage) {
+                e.preventDefault();
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                const newX = initialX + dx;
+                const newY = initialY + dy;
+                modalImage.style.transform = `scale(${currentZoom}) translate(${newX}px, ${newY}px)`;
+            }
+        });
+
+        document.addEventListener('mouseup', function() {
+            isDragging = false;
+        });
+
+        // Keyboard controls
+        document.addEventListener('keydown', function(e) {
+            const modal = document.getElementById('imageModal');
+            if (modal.style.display === 'block') {
+                if (e.key === 'Escape') {
+                    closeImageModal();
+                } else if (e.key === '+' || e.key === '=') {
+                    zoomIn();
+                } else if (e.key === '-') {
+                    zoomOut();
+                }
+            }
+        });
+
+        // Add click handlers to all section images
+        document.addEventListener('DOMContentLoaded', function() {
+            setLanguage('en');
+
+            const sectionImages = document.querySelectorAll('.section-image');
+            sectionImages.forEach(img => {
+                img.addEventListener('click', function() {
+                    openImageModal(this.src, this.alt);
+                });
+            });
+        });
+    </script>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal">
+        <button class="close-btn" onclick="closeImageModal()">&times;</button>
+        <div class="zoom-controls">
+            <button class="zoom-btn" onclick="zoomOut()">−</button>
+            <button class="zoom-btn" onclick="zoomIn()">+</button>
+        </div>
+        <div class="modal-content">
+            <img id="modalImage" class="modal-image" src="" alt="">
+        </div>
+        <div id="zoomLevel" class="zoom-level">100%</div>
+    </div>
+</body>
+</html>

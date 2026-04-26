@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Digestive RPG Movement</title>
+<style>
+body {
+    text-align: center;
+    background: #222;
+    color: white;
+    font-family: Arial;
+}
+canvas {
+    background: #111;
+    margin-top: 20px;
+    border: 3px solid white;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🧬 Digestive System RPG</h1>
+<p>Play as the hero of digestion in a role-play game. Complete missions by visiting organs, collecting nutrients, and learning how the body processes food.</p>
+
+<div id="gameStatus" style="max-width:700px; margin:10px auto; text-align:left; background: rgba(255,255,255,0.08); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);">
+    <strong>Mission:</strong> <span id="missionText">Find the Mouth and begin your digestive journey.</span><br>
+    <strong>Score:</strong> <span id="score">0</span> | <strong>Visited:</strong> <span id="visitedCount">0</span>/8
+</div>
+
+<canvas id="gameCanvas" width="500" height="400"></canvas>
+<p id="info"></p>
+
+<section style="max-width:700px; margin: 30px auto; text-align:left; background: rgba(255,255,255,0.08); padding: 20px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);">
+    <h2>Human Digestive System</h2>
+    <p>The human digestive system breaks down food so the body can absorb nutrients and get rid of waste. Move your hero through the organs to complete the mission list.</p>
+    <ul>
+        <li><strong>👄 Mouth</strong> – Chews food and mixes it with saliva to begin digestion.</li>
+        <li><strong>🧵 Esophagus</strong> – Pushes food down to the stomach using muscle contractions.</li>
+        <li><strong>🍔 Stomach</strong> – Mixes food with acid and enzymes to turn it into chyme.</li>
+        <li><strong>🧬 Small Intestine</strong> – Absorbs nutrients into the blood through tiny villi.</li>
+        <li><strong>🚽 Large Intestine</strong> – Absorbs water and forms waste before elimination.</li>
+        <li><strong>🟤 Liver</strong> – Produces bile, which helps digest fats.</li>
+        <li><strong>🟡 Gallbladder</strong> – Stores and releases bile into the small intestine.</li>
+        <li><strong>🟣 Pancreas</strong> – Releases digestive enzymes and controls blood sugar.</li>
+    </ul>
+    <p>Use the arrow keys to explore each organ and read the short description in the info box.</p>
+</section>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+let player = {
+    x: 50,
+    y: 50,
+    size: 20,
+    speed: 3
+};
+
+let keys = {};
+let score = 0;
+let visitedCount = 0;
+let currentTargetIndex = 0;
+
+const organs = [
+    {name:"👄 Mouth", x:80, y:50, info:"Food is chewed here.", mission:"Reach the Mouth to start digestion.", points:10, visited:false},
+    {name:"🧵 Esophagus", x:200, y:100, info:"Food moves by peristalsis.", mission:"Travel down the Esophagus to deliver the food.", points:10, visited:false},
+    {name:"🍔 Stomach", x:320, y:180, info:"Food mixed with acid.", mission:"Enter the Stomach and help churn the meal.", points:15, visited:false},
+    {name:"🟤 Liver", x:420, y:80, info:"Produces bile to break down fats.", mission:"Visit the Liver to prepare bile for digestion.", points:12, visited:false},
+    {name:"🟡 Gallbladder", x:450, y:150, info:"Stores bile and releases it when needed.", mission:"Check in with the Gallbladder for bile supply.", points:12, visited:false},
+    {name:"🟣 Pancreas", x:420, y:260, info:"Releases enzymes and controls blood sugar.", mission:"Find the Pancreas to add digestive enzymes.", points:15, visited:false},
+    {name:"🧬 Small Intestine", x:260, y:310, info:"Nutrients absorbed here.", mission:"Move to the Small Intestine for nutrient absorption.", points:20, visited:false},
+    {name:"🚽 Large Intestine", x:80, y:330, info:"Water absorbed and waste formed.", mission:"Finish the journey at the Large Intestine.", points:20, visited:false}
+];
+
+function updateStatus() {
+    document.getElementById("score").innerText = score;
+    document.getElementById("visitedCount").innerText = visitedCount;
+    const target = organs[currentTargetIndex];
+    document.getElementById("missionText").innerText = target ? target.mission : "All organs visited. Well done, digestive hero!";
+}
+
+function setInfo(text) {
+    document.getElementById("info").innerText = text;
+}
+
+document.addEventListener("keydown", e => keys[e.key] = true);
+document.addEventListener("keyup", e => keys[e.key] = false);
+
+function movePlayer() {
+    if(keys["ArrowUp"]) player.y -= player.speed;
+    if(keys["ArrowDown"]) player.y += player.speed;
+    if(keys["ArrowLeft"]) player.x -= player.speed;
+    if(keys["ArrowRight"]) player.x += player.speed;
+    player.x = Math.max(0, Math.min(canvas.width - player.size, player.x));
+    player.y = Math.max(0, Math.min(canvas.height - player.size, player.y));
+}
+
+function checkCollision() {
+    const target = organs[currentTargetIndex];
+    for(let organ of organs) {
+        let dist = Math.hypot(player.x - organ.x, player.y - organ.y);
+        if(dist < 25) {
+            setInfo(organ.name + ": " + organ.info);
+            if(organ === target && !organ.visited) {
+                organ.visited = true;
+                score += organ.points;
+                visitedCount += 1;
+                currentTargetIndex = Math.min(currentTargetIndex + 1, organs.length);
+                setInfo(organ.name + ": " + organ.info + " You completed this mission!");
+                updateStatus();
+            }
+        }
+    }
+}
+
+function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    organs.forEach(o => {
+        ctx.fillStyle = o.visited ? "#444" : "green";
+        ctx.beginPath();
+        ctx.arc(o.x, o.y, 15, 0, Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle = "white";
+        ctx.font = "14px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(o.name, o.x, o.y + 35);
+    });
+
+    ctx.fillStyle = "#FF6347";
+    ctx.fillRect(player.x, player.y, player.size, player.size);
+    ctx.fillStyle = "white";
+    ctx.font = "16px Arial";
+    ctx.fillText("Hero", player.x + player.size / 2, player.y - 8);
+}
+
+function gameLoop() {
+    movePlayer();
+    checkCollision();
+    draw();
+    requestAnimationFrame(gameLoop);
+}
+
+updateStatus();
+gameLoop();
+</script>
+
+</body>
+</html>
